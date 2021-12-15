@@ -14,7 +14,7 @@ Release:        1%{?dist}
 Summary:        Music production and performance system
 Group:          Multimedia
 Distribution: Debian
-License:        nonfree
+License:        EULA
 URL:            https://www.bitwig.com/
 
 Source0:        https://downloads-as.bitwig.com/stable/%{version}/%{name}-%{version}.deb

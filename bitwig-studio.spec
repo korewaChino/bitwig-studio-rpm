@@ -3,10 +3,8 @@
 
 %global         debug_package %{nil}
 %global         __strip /bin/true
-%global         __requires_exclude_from ^(/opt/bitwig-studio/bin/.*\\.so.*|/opt/bitwig-studio/bin/jre/lib/amd64/headless/.*\\.so|/opt/bitwig-studio/bin/jre/lib/amd64/jli/.*\\.so|/opt/bitwig-studio/bin/jre/lib/amd64/server/.*\\.so|/opt/bitwig-studio/bin/jre/lib/amd64/.*\\.so|/opt/bitwig-studio/bin/jre/lib/amd64/xawt/.*\\.so|/opt/bitwig-studio/bin/vamp-plugins/.*\\.so)$
-%global         _privatelibs libav(codec|format).*[.]so.*
-%global         __provides_exclude ^(%{_privatelibs})$
-%global         __requires_exclude ^(%{_privatelibs})$
+%global         __requires_exclude_from ^/opt/bitwig-studio/.*$
+%global         __provides_exclude_from ^/opt/bitwig-studio/.*$
 
 Name:           bitwig-studio
 Version:        5.3.13
@@ -22,7 +20,10 @@ Source0:        https://www.bitwig.com/dl/Bitwig%20Studio/5.3.13/installer_linux
 
 # This "meta-spec" will download the Debian version of Bitwig Studio, extract it, then rebuild the binaries as an RPM instead.
 BuildRequires:  alien
-Requires:       java-latest-openjdk
+Requires: ffmpeg
+
+# todo: Maybe override with system JRE,
+
 ExclusiveArch:  x86_64
 # make this a nosrc package, becuase it's not free
 # NoSource:       0
@@ -40,9 +41,11 @@ alien -s %{SOURCE0}
 %install
 # rm -rf $RPM_BUILD_ROOT
 # cd %{name}-%{version}
-mkdir -p $RPM_BUILD_ROOT/opt/bitwig-studio
+mkdir -p %{buildroot}/opt/bitwig-studio
 cp -ax opt/ %{buildroot}/
 cp -ax usr %{buildroot}/
+ln -sfv /usr/bin/ffmpeg %{buildroot}/opt/bitwig-studio/bin/ffmpeg
+ln -sfv /usr/bin/ffprobe %{buildroot}/opt/bitwig-studio/bin/ffprobe
 export QA_SKIP_RPATHS=1
 
 %files
@@ -61,4 +64,4 @@ export QA_SKIP_RPATHS=1
 
 %changelog
 * Wed Dec 15 2021 Cappy Ishihara <cappy@cappuchino.xyz>
-- 
+-
